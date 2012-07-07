@@ -48,7 +48,6 @@ namespace NatGeo.FieldScope.SOE
 
         public virtual void Shutdown () {
             LogInfo(m_soeName + " shutting down");
-            m_logger = null;
             m_soeName = null;
             m_serverObjectHelper = null;
             m_logger = null;
@@ -154,19 +153,27 @@ namespace NatGeo.FieldScope.SOE
         }
 
         protected void LogError (string message) {
-            m_logger.AddMessage((int)ServerLogger.msgType.error, 8000, message);
+            if (m_logger != null) {
+                m_logger.AddMessage((int)ServerLogger.msgType.error, 8000, message);
+            }
         }
 
         protected void LogWarning (string message) {
-            m_logger.AddMessage((int)ServerLogger.msgType.warning, 8000, message);
+            if (m_logger != null) {
+                m_logger.AddMessage((int)ServerLogger.msgType.warning, 8000, message);
+            }
         }
 
         protected void LogInfo (string message) {
-            m_logger.AddMessage((int)ServerLogger.msgType.infoStandard, 8000, message);
+            if (m_logger != null) {
+                m_logger.AddMessage((int)ServerLogger.msgType.infoStandard, 8000, message);
+            }
         }
 
         protected void LogDebug (string message) {
-            m_logger.AddMessage((int)ServerLogger.msgType.debug, 8000, message);
+            if (m_logger != null) {
+                m_logger.AddMessage((int)ServerLogger.msgType.debug, 8000, message);
+            }
         }
     }
 
