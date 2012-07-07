@@ -14,11 +14,11 @@ using ESRI.ArcGIS.SOESupport;
 namespace NatGeo.FieldScope.SOE
 {
     [ComVisible(true)]
-    [Guid("098d638b-8841-4c4d-958f-90ad146dd6ef")]
+    [Guid("0A4BB1AC-9399-11E1-BCD2-86E9BBE59B18")]
     [ClassInterface(ClassInterfaceType.None)]
     [ServerObjectExtension("MapServer",
-        AllCapabilities = "GetInfo;QueryPoints",
-        DefaultCapabilities = "GetInfo;QueryPoints",
+        AllCapabilities = "GetInfo,QueryPoints",
+        DefaultCapabilities = "GetInfo,QueryPoints",
         Description = "Query map layer at multiple points",
         DisplayName = "QueryPointsSOE",
         Properties = "",

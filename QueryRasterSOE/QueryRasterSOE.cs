@@ -17,8 +17,8 @@ namespace NatGeo.FieldScope.SOE
     [Guid("5d2a6487-02b7-409a-af26-682aa8cee888")]
     [ClassInterface(ClassInterfaceType.None)]
     [ServerObjectExtension("MapServer",
-        AllCapabilities = "GetInfo;QueryRaster",
-        DefaultCapabilities = "GetInfo;QueryRaster",
+        AllCapabilities = "GetInfo,QueryRaster",
+        DefaultCapabilities = "GetInfo,QueryRaster",
         Description = "Return polygon of all raster cells that satisfy given conditions",
         DisplayName = "QueryRasterSOE",
         Properties = "",
