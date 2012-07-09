@@ -151,6 +151,7 @@ namespace NatGeo.FieldScope.SOE
             resultFeature.Attributes.Add("Shape_Area", (resultGeom as IArea).Area);
             resultFeature.Attributes.Add("Shape_Units", DescribeUnits(resultGeom.SpatialReference));
             FeatureSet result = new FeatureSet();
+            result.GeometryType = esriGeometryType.esriGeometryPolygon;
             result.Features.Add(resultFeature);
 
             return Encoding.UTF8.GetBytes(result.ToJsonObject().ToJson());

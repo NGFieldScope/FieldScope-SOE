@@ -111,6 +111,7 @@ namespace NatGeo.FieldScope.SOE
             resultFeature.Attributes.Add("Shape_Length", path.Length);
             resultFeature.Attributes.Add("Shape_Units", DescribeUnits(path.SpatialReference));
             FeatureSet result = new FeatureSet();
+            result.GeometryType = esriGeometryType.esriGeometryPolyline;
             result.Features.Add(resultFeature);
 
             return Encoding.UTF8.GetBytes(result.ToJsonObject().ToJson());
