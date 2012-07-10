@@ -18,7 +18,7 @@ namespace NatGeo.FieldScope.SOE
         DefaultCapabilities = "",
         Description = "Compute flow path downhill from pour point",
         DisplayName = "FlowPathSOE",
-        Properties = "",
+        Properties = "HighResolutionMaxSteps=1000;LowResolutionMaxSteps=16384",
         SupportsREST = true,
         SupportsSOAP = false)]
     public class FlowPathSOE : FieldScopeSOE
@@ -31,6 +31,12 @@ namespace NatGeo.FieldScope.SOE
 
         override public void Construct (IPropertySet props) {
             base.Construct(props);
+            if (props.GetProperty("HighResolutionMaxSteps") != null) {
+                m_maxHighResolutionSteps = int.Parse(props.GetProperty("HighResolutionMaxSteps") as string);
+            }
+            if (props.GetProperty("LowResolutionMaxSteps") != null) {
+                m_maxLowResolutionSteps = int.Parse(props.GetProperty("LowResolutionMaxSteps") as string);
+            }
             m_LowResFlowDir = GetDataSourceByID(0) as IRaster;
             if (m_LowResFlowDir == null) {
                 LogError("missing or invalid data layer: low resolution flow direction");
@@ -203,6 +209,8 @@ namespace NatGeo.FieldScope.SOE
                 point.Y += dy;
             }
             path.AddPoint(point.Clone() as IPoint);
+            pourPoint.X = point.X;
+            pourPoint.Y = point.Y;
         }
     }
 }
