@@ -37,8 +37,8 @@ namespace NatGeo.FieldScope.SOE
             for (int i = 0; i < layers.Length; ) {
                 if (layers[i].Type.Equals("Raster Layer")) {
                     m_layers.Add(layers[i].ID, new QueryPointsRasterLayer(
-                            layers[i],
-                            GetDataSourceByID(layers[i].ID) as IRaster));
+                        layers[i],
+                        GetDataSourceByID(layers[i].ID) as IRaster));
                     i += 1;
                 } else if (layers[i].Type.Equals("Feature Layer")) {
                     m_layers.Add(layers[i].ID, new QueryPointsFeatureClassLayer(
@@ -47,10 +47,10 @@ namespace NatGeo.FieldScope.SOE
                     i += 1;
                 } else if (layers[i].Type.Equals("Mosaic Layer")) {
                     m_layers.Add(layers[i].ID, new QueryPointsMosaicLayer(
-                            layers[i],
-                            GetDataSourceByID(layers[i].ID + 1) as IFeatureClass,
-                            GetDataSourceByID(layers[i].ID + 2) as IFeatureClass,
-                            GetDataSourceByID(layers[i].ID + 3) as IRaster));
+                        layers[i],
+                        GetDataSourceByID(layers[i].ID + 1) as IFeatureClass,
+                        GetDataSourceByID(layers[i].ID + 2) as IFeatureClass,
+                        GetDataSourceByID(layers[i].ID + 3) as IRaster));
                     i += 4;
                 } else {
                     i += 1;
@@ -186,17 +186,22 @@ namespace NatGeo.FieldScope.SOE
             return null;
         }
 
-        public JsonObject ToJson (IList<object> values) {
+        public JsonObject ToJson (object values) {
             JsonObject result = new JsonObject();
             if (ID != null) {
                 result.AddString("id", ID);
             }
-            if (values.Count == 0) {
-                result.AddObject("result", null);
-            } else if (values.Count == 1) {
-                result.AddObject("result", values[0]);
+            if (values is List<object>) {
+                List<object> list = values as List<object>;
+                if (list.Count == 0) {
+                    result.AddObject("result", null);
+                } else if (list.Count == 1) {
+                    result.AddObject("result", list[0]);
+                } else {
+                    result.AddObject("result", list.ToArray());
+                }
             } else {
-                result.AddObject("result", values.ToArray());
+                result.AddObject("result", values);
             }
             return result;
         }
@@ -233,8 +238,7 @@ namespace NatGeo.FieldScope.SOE
         public QueryPointsMosaicLayer (IMapLayerInfo layerInfo,
                                        IFeatureClass boundary,
                                        IFeatureClass footprint,
-                                       IRaster mosaic)
-            : base(layerInfo) {
+                                       IRaster mosaic) : base(layerInfo) {
             m_catalog = footprint;
             m_timeInfo = layerInfo as IMapTableTimeInfo;
             m_cache = new Dictionary<int, IRaster2>();
@@ -269,25 +273,54 @@ namespace NatGeo.FieldScope.SOE
 
     internal class QueryPointsRasterLayer : QueryPointsLayer
     {
-        public QueryPointsRasterLayer (IMapLayerInfo layerInfo, IRaster raster)
-            : base(layerInfo) {
+        private IRaster2 m_raster;
 
+        public QueryPointsRasterLayer (IMapLayerInfo layerInfo, IRaster raster) : base(layerInfo) {
+            m_raster = raster as IRaster2;
         }
 
         override public IEnumerable<JsonObject> Query (IEnumerable<PointQuery> points, string field) {
-            return new JsonObject[] { };
+            LinkedList<JsonObject> results = new LinkedList<JsonObject>();
+            int fieldIndex = -1;
+            if ((m_raster.AttributeTable != null) && (field != null)) {
+                fieldIndex = m_raster.AttributeTable.FindField(field);
+            }
+            foreach (PointQuery point in points) {
+                object value = Util.FindValue(m_raster, 0, point.Geometry);
+                if (fieldIndex >= 0) {
+                    value = m_raster.AttributeTable.GetRow(Convert.ToInt32(value)).get_Value(fieldIndex);
+                }
+                results.AddLast(point.ToJson(value));
+            }
+            return results;
         }
     }
 
     internal class QueryPointsFeatureClassLayer : QueryPointsLayer
     {
-        public QueryPointsFeatureClassLayer (IMapLayerInfo layerInfo, IFeatureClass fc)
-            : base(layerInfo) {
+        private IFeatureClass m_fc;
 
+        public QueryPointsFeatureClassLayer (IMapLayerInfo layerInfo, IFeatureClass fc) : base(layerInfo) {
+            m_fc = fc;
         }
 
         override public IEnumerable<JsonObject> Query (IEnumerable<PointQuery> points, string field) {
-            return new JsonObject[] { };
+            LinkedList<JsonObject> results = new LinkedList<JsonObject>();
+            SpatialFilterClass filter = new SpatialFilterClass();
+            filter.SubFields = field;
+            filter.SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects;
+            foreach (PointQuery point in points) {
+                filter.Geometry = point.Geometry;
+                IFeatureCursor cursor = m_fc.Search(filter, false);
+                IFeature feature = cursor.NextFeature();
+                if (feature != null) {
+                    object value = feature.get_Value(cursor.FindField(field));
+                    results.AddLast(point.ToJson(value));
+                } else {
+                    results.AddLast(point.ToJson(null));
+                }
+            }
+            return results;
         }
     }
 }
