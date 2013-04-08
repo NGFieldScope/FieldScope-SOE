@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<project name="FieldScopeSOE" default="all" basedir=".">
+    
+    <target name="init" description="initialize basic properties">
+        <!-- We prefer our timestamps in ISO 8601 format -->
+        <tstamp>
+            <format property="DSTAMP" pattern="yyyy-MM-dd"/>
+            <format property="TSTAMP" pattern="HH:mm:ssZ"/>
+            <format property="TODAY" pattern="yyyy-MM-dd'T'HH:mm:ssZ"/>
+        </tstamp>
+
+        <!-- ArcGIS path properties -->
+    	<property environment="env"/>
+    	<property name="devkit" value="${env.AGSDESKTOPJAVA}"/>
+    	<property name="classpath" value="${devkit}/java/lib/arcobjects.jar"/>
+    	
+        <!-- Basic path properties -->
+        <property name="src" value="src"/>
+        <property name="class" value="class"/>
+        <property name="bin" value="bin"/>
+        <property name="build" value="build"/>
+    </target>
+	
+	<target name="compile" depends="init">
+		<javac srcdir="${src}"
+	           destdir="${class}"
+	           classpath="${classpath}"
+	           compiler="modern"
+	           source="1.6"
+	           target="1.6"
+	           debug="on"
+			   includeAntRuntime="no"
+	           debuglevel="source,lines,vars">
+	      <include name="**/*.java"/>
+	      <exclude name="**/*.old.java"/>
+	    </javac>
+	</target>
+		
+    <target name="jar" depends="compile">
+	    <jar jarfile="${bin}/FieldScopeSOE.jar"
+	         basedir="${class}"
+	         compress="false"
+	         index="true">
+	      <include name="**/*.*"/>
+	    </jar>		
+	</target>
+	
+	<target name="flowpath" depends="jar">
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+		<copy file="config/FlowPath.xml" tofile="${build}/Config.xml"/>
+        <mkdir dir="${build}/Install"/>
+		<copy file="${bin}/FieldScopeSOE.jar" todir="${build}/Install"/>
+		<zip destfile="${bin}/FlowPath.soe" basedir="${build}"/>
+        <delete dir="${build}"/>
+	</target>
+    
+    <target name="upstreamArea" depends="jar">
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+        <copy file="config/UpstreamArea.xml" tofile="${build}/Config.xml"/>
+        <mkdir dir="${build}/Install"/>
+        <copy file="${bin}/FieldScopeSOE.jar" todir="${build}/Install"/>
+        <zip destfile="${bin}/UpstreamArea.soe" basedir="${build}"/>
+        <delete dir="${build}"/>
+    </target>
+	
+	<target name="all" depends="flowpath,upstreamArea">
+	</target>
+	
+	<target name="clean" depends="init">
+        <delete>
+        	<fileset dir="${bin}" includes="*.*"/>
+            <fileset dir="${class}" includes="**/*.*"/>
+    	</delete>
+	</target>
+	
+</project>

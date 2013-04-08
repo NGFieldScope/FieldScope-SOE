@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ESRI.Configuration xmlns="http://schemas.esri.com/Desktop/AddIns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>UpstreamArea</Name>
+  <Description>Compute upstream area from watershed outlet</Description>
+  <Date>Fri Mar 16 13:50:15 PDT 2012</Date>
+  <manifest/>
+  <Author/>
+  <Company/>
+  <Version>1.0</Version>
+  <Targets>
+    <Target name="server" version="10.1"/>
+  </Targets>
+  <AddInID>{1b2ca78f-c891-42e1-ba9a-8508f0afce5c}</AddInID>
+  <AddIn language="Java">
+    <ServerObjectType>
+      <Name>MapServer</Name>
+      <ExtensionTypes>
+        <ExtensionType class="org.ngs.fieldscope.UpstreamArea" id="org.ngs.fieldscope.UpstreamArea" library="FieldScopeSOE.jar">
+          <Name>UpstreamArea</Name>
+          <DisplayName>Upstream Area</DisplayName>
+          <Description>Compute upstream area from watershed outlet</Description>
+          <Properties>
+            <HighResolutionThreshold>20</HighResolutionThreshold>
+          </Properties>
+          <Info>
+            <DefaultWebCapabilities/>
+            <AllWebCapabilities/>
+            <SupportsSOAP>false</SupportsSOAP>
+            <SupportsREST>true</SupportsREST>
+            <hasManagerPropertiesConfigurationPane>false</hasManagerPropertiesConfigurationPane>
+          </Info>
+          <Resources>
+            <WSDL/>
+          </Resources>
+        </ExtensionType>
+      </ExtensionTypes>
+    </ServerObjectType>
+  </AddIn>
+</ESRI.Configuration>
