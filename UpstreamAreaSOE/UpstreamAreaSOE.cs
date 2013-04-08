@@ -80,7 +80,7 @@ namespace NatGeo.FieldScope.SOE
             RestOperation sampleOper = new RestOperation("upstreamArea",
                                                          new string[] { "outlet", "tolerance", "outSR" },
                                                          new string[] { "json" },
-                                                         FlowPathHandler);
+                                                         UpstreamAreaHandler);
             rootRes.operations.Add(sampleOper);
             return rootRes;
         }
@@ -92,7 +92,7 @@ namespace NatGeo.FieldScope.SOE
             return Encoding.UTF8.GetBytes(result.ToJson());
         }
 
-        private byte[] FlowPathHandler (NameValueCollection boundVariables, JsonObject operationInput, string outputFormat, string requestProperties, out string responseProperties) {
+        private byte[] UpstreamAreaHandler (NameValueCollection boundVariables, JsonObject operationInput, string outputFormat, string requestProperties, out string responseProperties) {
             responseProperties = null;
             JsonObject pointJson;
             if (!operationInput.TryGetJsonObject("outlet", out pointJson)) {
