@@ -18,7 +18,22 @@
         <property name="src" value="src"/>
         <property name="class" value="class"/>
         <property name="bin" value="bin"/>
-        <property name="build" value="build"/>
+        
+        <!-- Macro for building soe archives -->
+        <macrodef name="build-soe">
+            <attribute name="jar"/>
+            <attribute name="config"/>
+            <attribute name="destfile"/>
+            <sequential>
+            	<tempfile property="build" destDir="${java.io.tmpdir}" prefix="buildSOE"/>
+            	<mkdir dir="${build}"/>
+    	        <copy file="@{config}" tofile="${build}/Config.xml"/>
+    	        <mkdir dir="${build}/Install"/>
+    	        <copy file="@{jar}" todir="${build}/Install"/>
+    	        <zip destfile="@{destfile}" basedir="${build}"/>
+    	        <delete dir="${build}"/>
+            </sequential>
+        </macrodef>
     </target>
 	
 	<target name="compile" depends="init">
@@ -46,26 +61,30 @@
 	</target>
 	
 	<target name="flowpath" depends="jar">
-        <delete dir="${build}"/>
-        <mkdir dir="${build}"/>
-		<copy file="config/FlowPath.xml" tofile="${build}/Config.xml"/>
-        <mkdir dir="${build}/Install"/>
-		<copy file="${bin}/FieldScopeSOE.jar" todir="${build}/Install"/>
-		<zip destfile="${bin}/FlowPath.soe" basedir="${build}"/>
-        <delete dir="${build}"/>
+        <build-soe config="config/FlowPath.xml"
+                   jar="${bin}/FieldScopeSOE.jar"
+                   destfile="${bin}/FlowPath.soe"/>
 	</target>
     
     <target name="upstreamArea" depends="jar">
-        <delete dir="${build}"/>
-        <mkdir dir="${build}"/>
-        <copy file="config/UpstreamArea.xml" tofile="${build}/Config.xml"/>
-        <mkdir dir="${build}/Install"/>
-        <copy file="${bin}/FieldScopeSOE.jar" todir="${build}/Install"/>
-        <zip destfile="${bin}/UpstreamArea.soe" basedir="${build}"/>
-        <delete dir="${build}"/>
+    	<build-soe config="config/UpstreamArea.xml"
+                   jar="${bin}/FieldScopeSOE.jar"
+                   destfile="${bin}/UpstreamArea.soe"/>
+    </target>
+    
+    <target name="queryRaster" depends="jar">
+        <build-soe config="config/QueryRaster.xml"
+                   jar="${bin}/FieldScopeSOE.jar"
+                   destfile="${bin}/QueryRaster.soe"/>
+    </target>
+    
+    <target name="queryPoints" depends="jar">
+        <build-soe config="config/QueryPoints.xml"
+                   jar="${bin}/FieldScopeSOE.jar"
+                   destfile="${bin}/QueryPoints.soe"/>
     </target>
 	
-	<target name="all" depends="flowpath,upstreamArea">
+	<target name="all" depends="flowpath,upstreamArea,queryRaster,queryPoints">
 	</target>
 	
 	<target name="clean" depends="init">

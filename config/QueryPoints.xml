@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ESRI.Configuration xmlns="http://schemas.esri.com/Desktop/AddIns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>QueryPoints</Name>
+  <Description>Query map layer at multiple points</Description>
+  <Date>Fri Mar 16 13:50:15 PDT 2012</Date>
+  <manifest/>
+  <Author/>
+  <Company/>
+  <Version>1.0</Version>
+  <Targets>
+    <Target name="server" version="10.1"/>
+  </Targets>
+  <AddInID>{11c2daeb-36e6-440f-b4b2-ded5dda56716}</AddInID>
+  <AddIn language="Java">
+    <ServerObjectType>
+      <Name>MapServer</Name>
+      <ExtensionTypes>
+        <ExtensionType class="org.ngs.fieldscope.QueryPoints" id="org.ngs.fieldscope.QueryPoints" library="FieldScopeSOE.jar">
+          <Name>QueryPoints</Name>
+          <DisplayName>Query Points</DisplayName>
+          <Description>Query map layer at multiple points</Description>
+          <Properties/>
+          <Info>
+            <DefaultWebCapabilities/>
+            <AllWebCapabilities/>
+            <SupportsSOAP>false</SupportsSOAP>
+            <SupportsREST>true</SupportsREST>
+            <hasManagerPropertiesConfigurationPane>false</hasManagerPropertiesConfigurationPane>
+          </Info>
+          <Resources>
+            <WSDL/>
+          </Resources>
+        </ExtensionType>
+      </ExtensionTypes>
+    </ServerObjectType>
+  </AddIn>
+</ESRI.Configuration>
